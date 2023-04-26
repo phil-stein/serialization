@@ -45,8 +45,15 @@ void serialization_test()
   P_STR(serialization_deserialize_str(buffer, &offset));
   
 
-  arrfree(buffer);
+  ARRFREE(buffer);
 
+}
+
+void serialization_init()
+{
+  ERR_CHECK(sizeof(int) == 4, "serialization requires int to be 4 bytes in size");
+  ERR_CHECK(sizeof(u32) == 4, "serialization requires u32 / unsigned int to be 4 bytes in size");
+  ERR_CHECK(sizeof(f32) == 4, "serialization requires f32 / float to be 4 bytes in size");
 }
 
 
@@ -161,7 +168,7 @@ void serialization_serialize_str(u8** buffer, char* val)
 char* serialization_deserialize_str(u8* buffer, u32* offset)
 {
   u32 len = serialization_deserialize_u32(buffer, offset);
-  P_U32(len);
+  // P_U32(len);
   for (int i = 0; i < len; ++i)
   {
     str_buf[i] = serialization_deserialize_u8(buffer, offset); 
