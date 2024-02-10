@@ -10,6 +10,9 @@
 //                 global: https://github.com/phil-stein/global
 //                 math:   https://github.com/phil-stein/math
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 // @DOC: used for shoving f32 into byte array
 //       f32_wrapper.f_val = 1.23f;
@@ -62,5 +65,9 @@ void  serialization_deserialize_ivec2(u8* buffer, u32* offset, ivec2 out);
 void  serialization_deserialize_vec3(u8* buffer, u32* offset, vec3 out);
 // @DOC: deserialize string
 char* serialization_deserialize_str(u8* buffer, u32* offset);
+
+#ifdef __cplusplus
+} // extern c
+#endif
 
 #endif
