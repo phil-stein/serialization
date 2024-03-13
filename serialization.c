@@ -1,5 +1,6 @@
 #include "serialization/serialization.h"
 
+#include "math/math_m.h"
 #include "stb/stb_ds.h"
 
 
@@ -37,7 +38,7 @@ void serialization_test()
   int s0d = serialization_deserialize_s32(buffer, &offset);
   P_INT(s0d); ASSERT(s0d == s0);
   f32 f0d = serialization_deserialize_f32(buffer, &offset);
-  P_F32(f0d); ASSERT(f0d == f0);
+  P_F32(f0d); ASSERT(FLOAT_EQ(f0d, f0));
   vec2 v2_0d; serialization_deserialize_vec2(buffer, &offset, v2_0d);
   P_VEC2(v2_0d); ASSERT(vec2_equal(v2_0d, v2_0)); 
   vec3 v3_0d; serialization_deserialize_vec3(buffer, &offset, v3_0d);
@@ -87,10 +88,10 @@ u32 serialization_deserialize_u32(u8* buffer, u32* offset)
 
 void serialization_serialize_s32(u8** buffer, int val)
 {
-  arrput(*buffer, val >> 24);
-  arrput(*buffer, val >> 16);
-  arrput(*buffer, val >> 8);
-  arrput(*buffer, val); 
+  arrput(*buffer, (u8)(val >> 24));
+  arrput(*buffer, (u8)(val >> 16));
+  arrput(*buffer, (u8)(val >>  8));
+  arrput(*buffer, (u8)(val)); 
 }
 int serialization_deserialize_s32(u8* buffer, u32* offset)
 {
@@ -105,10 +106,10 @@ void serialization_serialize_f32(u8** buffer, f32 val)
 {
   f32_wrapper_t value;
   value.f_val = val;
-  arrput(*buffer, value.u_val >> 24);
-  arrput(*buffer, value.u_val >> 16);
-  arrput(*buffer, value.u_val >> 8);
-  arrput(*buffer, value.u_val);  
+  arrput(*buffer, (u8)(value.u_val >> 24));
+  arrput(*buffer, (u8)(value.u_val >> 16));
+  arrput(*buffer, (u8)(value.u_val >>  8));
+  arrput(*buffer, (u8)(value.u_val));  
 }
 f32 serialization_deserialize_f32(u8* buffer, u32* offset)
 {
@@ -155,12 +156,12 @@ void serialization_deserialize_vec3(u8* buffer, u32* offset, vec3 out)
 
 void serialization_serialize_str(u8** buffer, char* val)
 {
-  u32 len = strlen(val);
+  u32 len = (u32)strlen(val);
   serialization_serialize_u32(buffer, len);
 
-  for (int i = 0; i < len; ++i)
+  for (int i = 0; i < (int)len; ++i)
   {
-    serialization_serialize_u8(buffer, val[i]); 
+    serialization_serialize_u8(buffer, (u8)val[i]); 
   }
 }
 // return needs to be copies as it gets overwritten next call
@@ -168,9 +169,9 @@ char* serialization_deserialize_str(u8* buffer, u32* offset)
 {
   u32 len = serialization_deserialize_u32(buffer, offset);
   // P_U32(len);
-  for (int i = 0; i < len; ++i)
+  for (int i = 0; i < (int)len; ++i)
   {
-    str_buf[i] = serialization_deserialize_u8(buffer, offset); 
+    str_buf[i] = (char)serialization_deserialize_u8(buffer, offset); 
   }
   str_buf[len] = '\0';
   return str_buf;
